@@ -1,7 +1,7 @@
 package com.reactive.webflux.api.restful.services.category;
 
-import com.practice.springboot.webflux.models.documents.Category;
-import com.practice.springboot.webflux.models.repository.CategoryRepository;
+import com.reactive.webflux.api.restful.models.documents.Category;
+import com.reactive.webflux.api.restful.models.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

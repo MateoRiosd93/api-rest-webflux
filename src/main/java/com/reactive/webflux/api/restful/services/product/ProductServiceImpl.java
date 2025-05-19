@@ -1,7 +1,7 @@
 package com.reactive.webflux.api.restful.services.product;
 
-import com.practice.springboot.webflux.models.documents.Product;
-import com.practice.springboot.webflux.models.repository.ProductRepository;
+import com.reactive.webflux.api.restful.models.documents.Product;
+import com.reactive.webflux.api.restful.models.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

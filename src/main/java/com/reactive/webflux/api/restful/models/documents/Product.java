@@ -29,6 +29,7 @@ public class Product {
     private String image;
     // Se agrega atributo category para relacionar el producto con una categoria
     @Valid
+    @NotNull
     private Category category;
 
 

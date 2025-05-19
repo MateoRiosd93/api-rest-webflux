@@ -2,6 +2,7 @@ package com.reactive.webflux.api.restful.controllers;
 
 import com.reactive.webflux.api.restful.models.documents.Product;
 import com.reactive.webflux.api.restful.services.product.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -9,13 +10,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.net.URI;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 @RestController
@@ -58,6 +64,43 @@ public class ProductController {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .body(product1)
                 );
+    }
+
+    // Utilizando @Valid
+    @PostMapping("/create/valid")
+    public Mono<ResponseEntity<Map<String, Object>>> createProductWithValid(@Valid @RequestBody Mono<Product> productMono) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        return productMono.flatMap(product -> {
+            if (product.getCreateAt() == null) {
+                product.setCreateAt(new Date());
+            }
+
+            return productService.save(product).map(product1 -> {
+                response.put("product", product1);
+                response.put("message", "Product create!!!");
+                response.put("tiemstamp", new Date());
+
+                return ResponseEntity
+                        .created(URI.create("/api/products/create/valid".concat(product1.getId())))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
+            });
+        }).onErrorResume(throwable -> {
+            return Mono.just(throwable).cast(WebExchangeBindException.class)
+                    .flatMap(error -> Mono.just(error.getFieldErrors()))
+                    .flatMapMany(Flux::fromIterable)
+                    .map(fieldError -> "Field" + fieldError.getField() + " " + fieldError.getDefaultMessage())
+                    .collectList()
+                    .flatMap(errors -> {
+                        response.put("errors", errors);
+                        response.put("tiemstamp", new Date());
+                        response.put("status", HttpStatus.BAD_REQUEST.value());
+
+                        return Mono.just(ResponseEntity.badRequest().body(response));
+                    });
+        });
     }
 
     @PutMapping("/{id}")

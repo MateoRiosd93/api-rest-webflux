@@ -131,7 +131,7 @@ public class ProductController {
     public Mono<ResponseEntity<Product>> uploadImage(@PathVariable String id, @RequestPart FilePart filePart) {
         return productService.findById(id)
                 .flatMap(product -> {
-                    product.setImage(UUID.randomUUID().toString() + "-" + filePart.filename()
+                    product.setImage(UUID.randomUUID() + "-" + filePart.filename()
                             .replace(" ", "")
                             .replace(":", "")
                             .replace("\\", ""));
@@ -148,7 +148,7 @@ public class ProductController {
             product.setCreateAt(new Date());
         }
 
-        product.setImage(UUID.randomUUID().toString() + "-" + filePart.filename()
+        product.setImage(UUID.randomUUID() + "-" + filePart.filename()
                 .replace(" ", "")
                 .replace(":", "")
                 .replace("\\", ""));

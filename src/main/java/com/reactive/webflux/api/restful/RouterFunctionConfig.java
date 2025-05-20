@@ -20,6 +20,7 @@ public class RouterFunctionConfig {
                 .POST("/api/handler/products", productHandler::createProduct)
                 .PUT("/api/handler/products/{id}", productHandler::editProduct)
                 .DELETE("/api/handler/products/{id}", productHandler::deleteProduct)
+                .POST("/api/handler/products/upload/{id}", productHandler::uploadImage)
                 .build();
     }
 }

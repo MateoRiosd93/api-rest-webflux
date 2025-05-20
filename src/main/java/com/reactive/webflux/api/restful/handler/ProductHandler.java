@@ -5,13 +5,16 @@ import com.reactive.webflux.api.restful.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Date;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -84,9 +87,27 @@ public class ProductHandler {
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
-    public Mono<ServerResponse> uploadImage(ServerRequest serverRequest){
+    public Mono<ServerResponse> uploadImage(ServerRequest serverRequest) {
         String id = serverRequest.pathVariable("id");
 
         return serverRequest.multipartData()
+                .map(stringPartMultiValueMap ->
+                        stringPartMultiValueMap.toSingleValueMap().get("file"))
+                .cast(FilePart.class)
+                .flatMap(file -> productService.findById(id)
+                        .flatMap(product -> {
+                            product.setImage(UUID.randomUUID() + "-" + file.filename()
+                                    .replace(" ", "")
+                                    .replace(":", "")
+                                    .replace("\\", "")
+                            );
+
+                            return file.transferTo(new File(path + product.getImage())).then(productService.save(product));
+                        })).flatMap(product ->
+                        ServerResponse.created(URI.create("/api/hanlder/products/upload"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(product)
+                )
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 }

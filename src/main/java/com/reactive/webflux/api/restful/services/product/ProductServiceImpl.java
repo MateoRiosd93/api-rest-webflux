@@ -27,11 +27,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Flux<Product> findAllNameToUpperCaseRepeat() {
-        return findAllNameToUpperCase().repeat(5000);
-    }
-
-    @Override
     public Mono<Product> findById(String id) {
         return productRepository.findById(id);
     }

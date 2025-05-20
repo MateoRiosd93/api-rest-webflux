@@ -5,8 +5,6 @@ import com.reactive.webflux.api.restful.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserter;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -71,6 +69,14 @@ public class ProductHandler {
                         .created(URI.create("/api/handler/products/".concat(editedProduct.getId())))
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(productService.save(editedProduct), Product.class))
+                .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> deleteProduct(ServerRequest serverRequest) {
+        String id = serverRequest.pathVariable("id");
+
+        return productService.findById(id)
+                .flatMap(product -> productService.delete(product).then(ServerResponse.noContent().build()))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 

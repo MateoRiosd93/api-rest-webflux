@@ -25,9 +25,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
-    private final ProductService productService;
-    @Value("{config.uploads.path}")
+
+    @Value("${config.uploads.path}")
     private String path;
+
+    private final ProductService productService;
 
     @GetMapping
     public Mono<ResponseEntity<Flux<Product>>> getProducts() {

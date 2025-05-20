@@ -3,6 +3,7 @@ package com.reactive.webflux.api.restful.handler;
 import com.reactive.webflux.api.restful.models.documents.Product;
 import com.reactive.webflux.api.restful.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -15,6 +16,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Component
 public class ProductHandler {
+
+    @Value("${config.uploads.path}")
+    private String path;
 
     private final ProductService productService;
 
@@ -78,5 +82,11 @@ public class ProductHandler {
         return productService.findById(id)
                 .flatMap(product -> productService.delete(product).then(ServerResponse.noContent().build()))
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    public Mono<ServerResponse> uploadImage(ServerRequest serverRequest){
+        String id = serverRequest.pathVariable("id");
+
+        return serverRequest.multipartData()
     }
 }

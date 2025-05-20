@@ -79,5 +79,4 @@ public class ProductHandler {
                 .flatMap(product -> productService.delete(product).then(ServerResponse.noContent().build()))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
-
 }

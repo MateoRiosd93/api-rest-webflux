@@ -70,7 +70,8 @@ public class ProductHandler {
                 .flatMap(editedProduct -> ServerResponse
                         .created(URI.create("/api/handler/products/".concat(editedProduct.getId())))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(productService.save(editedProduct), Product.class));
+                        .body(productService.save(editedProduct), Product.class))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 
 }

@@ -7,6 +7,7 @@ import com.reactive.webflux.api.restful.services.product.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -28,10 +29,13 @@ class RestfulApplicationTests {
 	@Autowired
 	private CategoryService categoryService;
 
+	@Value("${config.base.endpoint}")
+	private String BASE_URL;
+
 	@Test
 	public void getProducts() {
 		webTestClient.get()
-				.uri("/api/handler/products")
+				.uri(BASE_URL)
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange()
 				.expectStatus().isOk()
@@ -50,7 +54,7 @@ class RestfulApplicationTests {
 		Product product = productService.findByName("Play station 5").block();
 
 		webTestClient.get()
-				.uri("/api/handler/products/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
+				.uri(BASE_URL + "/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange()
 				.expectStatus().isOk()
@@ -78,7 +82,7 @@ class RestfulApplicationTests {
 		Product product = new Product("Play station 2", 100000.0, category);
 
 		webTestClient.post()
-				.uri("/api/handler/products")
+				.uri(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.body(Mono.just(product), Product.class)
@@ -98,7 +102,7 @@ class RestfulApplicationTests {
 		Product product = new Product("Play station 2", 100000.0, category);
 
 		webTestClient.post()
-				.uri("/api/handler/products")
+				.uri(BASE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.body(Mono.just(product), Product.class)
@@ -125,7 +129,7 @@ class RestfulApplicationTests {
 		Product productEdit = new Product("Play station 5 Slim", 350000.0, category);
 
 		webTestClient.put()
-				.uri("/api/handler/products/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
+				.uri(BASE_URL + "/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(Mono.just(productEdit), Product.class)
 				.exchange()
@@ -142,7 +146,7 @@ class RestfulApplicationTests {
 		Product product = productService.findByName("Monitor LG").block();
 
 		webTestClient.delete()
-				.uri("/api/handler/products/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
+				.uri(BASE_URL + "/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
 				.exchange()
 				.expectStatus().isNoContent()
 				.expectBody()

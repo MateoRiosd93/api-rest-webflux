@@ -144,7 +144,9 @@ class RestfulApplicationTests {
 		webTestClient.delete()
 				.uri("/api/handler/products/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
 				.exchange()
-				.expectStatus().isNoContent();
+				.expectStatus().isNoContent()
+				.expectBody()
+				.isEmpty();
 	}
 
 }

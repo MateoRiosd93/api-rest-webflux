@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -17,7 +18,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// Con el AutoConfigureWebTestClient y con SpringBootTest.WebEnvironment.MOCK levantamos los test con el contexto del proyecto pero con un mock
+// Con el webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT levanta un servidor de netty en un puerto random para ejecutar los tests.
+@AutoConfigureWebTestClient
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class RestfulApplicationTests {
 
 	@Autowired

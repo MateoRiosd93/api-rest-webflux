@@ -23,6 +23,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Mono<Category> findByName(String name) {
+        return categoryRepository.findByName(name);
+    }
+
+    @Override
     public Mono<Category> save(Category category) {
         return categoryRepository.save(category);
     }

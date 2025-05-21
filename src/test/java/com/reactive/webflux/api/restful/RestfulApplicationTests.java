@@ -117,5 +117,34 @@ class RestfulApplicationTests {
 				});
 	}
 
+	@Test
+	public void editProduct(){
+		Product product = productService.findByName("Play station 5").block();
+		Category category = categoryService.findByName("Electronico").block();
+
+		Product productEdit = new Product("Play station 5 Slim", 350000.0, category);
+
+		webTestClient.put()
+				.uri("/api/handler/products/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(Mono.just(productEdit), Product.class)
+				.exchange()
+				.expectStatus().isCreated()
+				.expectHeader().contentType(MediaType.APPLICATION_JSON)
+				.expectBody()
+				.jsonPath("$.id").isNotEmpty()
+				.jsonPath("$.name").isEqualTo("Play station 5 Slim")
+				.jsonPath("$.price").isEqualTo(350000.0);
+	}
+
+	@Test
+	public void deleteProduct(){
+		Product product = productService.findByName("Monitor LG").block();
+
+		webTestClient.delete()
+				.uri("/api/handler/products/{id}", Collections.singletonMap("id", Objects.requireNonNull(product).getId()))
+				.exchange()
+				.expectStatus().isNoContent();
+	}
 
 }

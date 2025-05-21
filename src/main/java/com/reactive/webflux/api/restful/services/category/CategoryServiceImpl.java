@@ -18,7 +18,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Mono<Category> findByID(String id) {
+    public Mono<Category> findById(String id) {
         return categoryRepository.findById(id);
     }
 

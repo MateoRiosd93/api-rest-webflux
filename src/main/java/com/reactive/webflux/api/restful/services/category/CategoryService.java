@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface CategoryService {
     Flux<Category> findAll();
-    Mono<Category> findByID(String id);
+    Mono<Category> findById(String id);
     Mono<Category> save(Category category);
     Mono<Void> delete(Category category);
 }
